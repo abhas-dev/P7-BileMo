@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Repository\PhoneRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: PhoneRepository::class)]
 class Phone
@@ -11,27 +12,35 @@ class Phone
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
+    #[Groups("phone:read")]
     private int $id;
 
     #[ORM\Column(type: 'string', length: 255)]
+    #[Groups("phone:read")]
     private string $name;
 
     #[ORM\Column(type: 'string', length: 255)]
+    #[Groups("phone:read")]
     private string $display;
 
     #[ORM\Column(type: 'string', length: 255)]
+    #[Groups("phone:read")]
     private string $processor;
 
     #[ORM\Column(type: 'integer')]
+    #[Groups("phone:read")]
     private int $batteryCapacity;
 
     #[ORM\Column(type: 'integer')]
+    #[Groups("phone:read")]
     private int $price;
 
     #[ORM\Column(type: 'integer')]
+    #[Groups("phone:read")]
     private int $quantity;
 
     #[ORM\Column(type: 'datetime')]
+    #[Groups("phone:read")]
     private \DateTime $createdAt;
 
     public function getId(): ?int
