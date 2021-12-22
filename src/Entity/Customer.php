@@ -29,7 +29,10 @@ class Customer
     private string $phoneNumber;
 
     #[ORM\Column(type: 'datetime')]
-    private $createdAt;
+    private \DateTime $createdAt;
+
+    #[ORM\ManyToOne(targetEntity: Client::class, inversedBy: 'customers')]
+    private Client $client;
 
     public function getId(): ?int
     {
@@ -101,9 +104,21 @@ class Customer
         return $this->createdAt;
     }
 
-    public function setCreatedAt(\DateTimeInterface $createdAt): self
+    public function setCreatedAt(\DateTime $createdAt): self
     {
         $this->createdAt = $createdAt;
+
+        return $this;
+    }
+
+    public function getClient(): ?Client
+    {
+        return $this->client;
+    }
+
+    public function setClient(?Client $client): self
+    {
+        $this->client = $client;
 
         return $this;
     }
