@@ -37,14 +37,9 @@ class PhoneController extends AbstractController
     {
         $phone = $this->phoneRepository->find($id);
 
-        if($phone)
-        {
-            return $this->json($this->phoneRepository->find($id), 200);
-        }
-
-        return $this->json([
-            'status' => 400,
-            'message' => "Ce produit n'existe pas"
-        ], 400);
+        return
+            $phone ?
+                $this->json($phone, 200) :
+                $this->json(['status' => 400, 'message' => "Ce produit n'existe pas"], 400);
     }
 }

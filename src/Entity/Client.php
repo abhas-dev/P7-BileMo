@@ -6,6 +6,7 @@ use App\Repository\ClientRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: ClientRepository::class)]
 class Client
@@ -13,24 +14,31 @@ class Client
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
+    #[Groups("client_read")]
     private int $id;
 
     #[ORM\Column(type: 'string', length: 255)]
+    #[Groups("client_read")]
     private string $username;
 
     #[ORM\Column(type: 'string', length: 255)]
+    #[Groups("client_read")]
     private string $email;
 
     #[ORM\Column(type: 'string', length: 255)]
+    #[Groups("client_read")]
     private string $password;
 
     #[ORM\Column(type: 'string', length: 255)]
+    #[Groups("client_read")]
     private string $companyName;
 
     #[ORM\Column(type: 'datetime')]
-    private $createdAt;
+    #[Groups("client_read")]
+    private \DateTime $createdAt;
 
     #[ORM\OneToMany(mappedBy: 'client', targetEntity: Customer::class)]
+    #[Groups("customer_detail")]
     private Collection $customers;
 
     public function __construct()
@@ -96,7 +104,7 @@ class Client
         return $this->createdAt;
     }
 
-    public function setCreatedAt(\DateTimeInterface $createdAt): self
+    public function setCreatedAt(\DateTime $createdAt): self
     {
         $this->createdAt = $createdAt;
 

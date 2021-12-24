@@ -44,7 +44,7 @@ final class CustomerFactory extends ModelFactory
             'adress' => self::faker()->address(),
             'email' => self::faker()->email(),
             'phoneNumber' => self::faker()->phoneNumber(),
-            'createdAt' => self::faker()->dateTimeBetween('-3 month', 'now'),
+            'createdAt' => self::faker()->dateTimeBetween('-3 month', 'now')
         ];
     }
 
