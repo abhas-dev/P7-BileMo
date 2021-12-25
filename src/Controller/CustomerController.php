@@ -5,9 +5,7 @@ namespace App\Controller;
 use App\Entity\Customer;
 use App\Repository\ClientRepository;
 use App\Repository\CustomerRepository;
-use App\Request\ParamConverter\CustomerConverter;
 use Doctrine\ORM\EntityManagerInterface;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -62,15 +60,14 @@ class CustomerController extends AbstractController
                 $this->json($customer, 200, [],['groups' => 'customer_read']) :
                 $this->json(['status' => 400, 'message' => "Cet utilisateur n'existe pas"], 400);
     }
-    
+
     /**
      * @param Request $request
-     * @param Customer $customer
      * @param ClientRepository $clientRepository
      * @return JsonResponse
      */
     #[Route('/customers', name: 'store_customer', methods: 'POST')]
-    public function store(Request $request, Customer $customer, ClientRepository $clientRepository): JsonResponse
+    public function store(Request $request, ClientRepository $clientRepository): JsonResponse
     {
         try {
 //            $customer->setClient($clientRepository->find($data['clientId']));
