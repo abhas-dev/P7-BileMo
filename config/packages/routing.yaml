@@ -1,6 +1,8 @@
 framework:
     router:
         utf8: true
+#api_login_check:
+#    path: /api/login_check
 
         # Configure how to generate URLs in non-HTTP contexts, such as CLI commands.
         # See https://symfony.com/doc/current/routing.html#generating-urls-in-commands

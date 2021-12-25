@@ -10,7 +10,6 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Serializer\Exception\NotEncodableValueException;
@@ -129,8 +128,13 @@ class CustomerController extends AbstractController
         throw new CustomerNotFoundException($id);
     }
 
+    /**
+     * @param int $id
+     * @param Customer|null $customer
+     * @return JsonResponse
+     */
     #[Route('/customers/{id<\d+>}', name: 'remove_customer', methods: 'DELETE')]
-    public function remove(Request $request, int $id, Customer $customer = null): JsonResponse
+    public function remove(int $id, Customer $customer = null): JsonResponse
     {
         if($customer)
         {
