@@ -2,13 +2,13 @@
 
 namespace App\Controller;
 
+use App\Entity\Phone;
+use App\Exception\PhoneNotFoundException;
 use App\Repository\PhoneRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Serializer\Serializer;
-use Symfony\Component\Serializer\SerializerInterface;
 
 class PhoneController extends AbstractController
 {
@@ -33,13 +33,12 @@ class PhoneController extends AbstractController
     }
 
     #[Route('/phones/{id<\d+>}', name: 'get_one_phone')]
-    public function getOne(int $id): JsonResponse
+    public function getOne(int $id, Phone $phone = null): JsonResponse
     {
-        $phone = $this->phoneRepository->find($id);
-
-        return
-            $phone ?
-                $this->json($phone, 200) :
-                $this->json(['status' => 400, 'message' => "Ce produit n'existe pas"], 400);
+        if ($phone) {
+            return $this->json($phone);
+        } else {
+            throw new PhoneNotFoundException($id);
+        }
     }
 }

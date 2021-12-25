@@ -3,12 +3,14 @@
 namespace App\Controller;
 
 use App\Entity\Customer;
+use App\Exception\CustomerNotFoundException;
 use App\Repository\ClientRepository;
 use App\Repository\CustomerRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Serializer\Exception\NotEncodableValueException;
@@ -52,13 +54,18 @@ class CustomerController extends AbstractController
 
     }
 
+    /**
+     * @param int $id
+     * @param Customer|null $customer
+     * @return JsonResponse
+     */
     #[Route('/customers/{id<\d+>}', name: 'get_one_customer', methods: 'GET')]
-    public function getOne(Customer $customer): JsonResponse
+    public function getOne(int $id, Customer $customer = null): JsonResponse
     {
-        return
-            $customer ?
-                $this->json($customer, 200, [],['groups' => 'customer_read']) :
-                $this->json(['status' => 400, 'message' => "Cet utilisateur n'existe pas"], 400);
+        if ($customer) {
+            return $this->json($customer, 200, [], ['groups' => 'customer_read']);
+        }
+        throw new CustomerNotFoundException($id);
     }
 
     /**
@@ -78,7 +85,7 @@ class CustomerController extends AbstractController
             $errors = $this->validator->validate($customer);
             if(count($errors) > 0)
             {
-                return $this->json($errors, 400);
+                return $this->json($errors[0]->getMessage(), 400);
             }
 
             $this->manager->persist($customer);
@@ -98,14 +105,16 @@ class CustomerController extends AbstractController
     }
 
     /**
-     * @param Customer $customer
      * @param Request $request
+     * @param int $id
+     * @param Customer|null $customer
      * @return JsonResponse
-      */
+     */
     #[Route('/customers/{id<\d+>}', name: 'edit_customer', methods: 'PUT')]
-    public function edit(Customer $customer, Request $request): JsonResponse
+    public function edit(Request $request, int $id, Customer $customer =null): JsonResponse
     {
-        try {
+        if($customer)
+        {
             $this->serializer->deserialize(
                 $request->getContent(),
                 Customer::class,
@@ -116,33 +125,21 @@ class CustomerController extends AbstractController
             $this->manager->flush();
 
             return $this->json(null,204);
-        } catch (NotEncodableValueException $exception){
-            return $this->json([
-                'status' => 400,
-                'message' => $exception->getMessage()
-            ], 400);
         }
+        throw new CustomerNotFoundException($id);
     }
 
-    /**
-     * @param Customer $customer
-     * @param Request $request
-     * @return JsonResponse
-     */
     #[Route('/customers/{id<\d+>}', name: 'remove_customer', methods: 'DELETE')]
-    public function remove(Customer $customer, Request $request): JsonResponse
+    public function remove(Request $request, int $id, Customer $customer = null): JsonResponse
     {
-        try {
+        if($customer)
+        {
             $this->manager->remove($customer);
             $this->manager->flush();
 
-            return $this->json(null,200);
-        } catch (NotEncodableValueException $exception){
-            return $this->json([
-                'status' => 400,
-                'message' => $exception->getMessage()
-            ], 400);
+            return $this->json(null);
         }
+        throw new CustomerNotFoundException($id);
     }
 
 }
