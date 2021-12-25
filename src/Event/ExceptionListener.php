@@ -30,7 +30,6 @@ class ExceptionListener extends Event
             $response->setStatusCode($exception->getStatusCode());
             $response->headers->replace($exception->getHeaders());
         } else {
-            dd('a');
             $response->setStatusCode(Response::HTTP_INTERNAL_SERVER_ERROR);
         }
 
