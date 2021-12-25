@@ -124,6 +124,21 @@
     "psr/log": {
         "version": "2.0.0"
     },
+    "sensio/framework-extra-bundle": {
+        "version": "6.2",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "master",
+            "version": "5.2",
+            "ref": "fb7e19da7f013d0d422fa9bce16f5c510e27609b"
+        },
+        "files": [
+            "config/packages/sensio_framework_extra.yaml"
+        ]
+    },
+    "symfony/browser-kit": {
+        "version": "v5.4.0"
+    },
     "symfony/cache": {
         "version": "v5.4.0"
     },
@@ -145,6 +160,9 @@
             "bin/console"
         ]
     },
+    "symfony/css-selector": {
+        "version": "v5.4.0"
+    },
     "symfony/dependency-injection": {
         "version": "v5.4.1"
     },
@@ -153,6 +171,9 @@
     },
     "symfony/doctrine-bridge": {
         "version": "v5.4.1"
+    },
+    "symfony/dom-crawler": {
+        "version": "v5.4.0"
     },
     "symfony/dotenv": {
         "version": "v5.4.0"
@@ -217,6 +238,21 @@
             "version": "1.0",
             "ref": "fadbfe33303a76e25cb63401050439aa9b1a9c7f"
         }
+    },
+    "symfony/phpunit-bridge": {
+        "version": "6.0",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "master",
+            "version": "5.3",
+            "ref": "97cb3dc7b0f39c7cfc4b7553504c9d7b7795de96"
+        },
+        "files": [
+            ".env.test",
+            "bin/phpunit",
+            "phpunit.xml.dist",
+            "tests/bootstrap.php"
+        ]
     },
     "symfony/polyfill-intl-grapheme": {
         "version": "v1.23.1"

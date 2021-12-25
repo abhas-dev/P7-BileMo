@@ -4,6 +4,8 @@ namespace App\Repository;
 
 use App\Entity\Customer;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\Tools\Pagination\Paginator;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -18,6 +20,26 @@ class CustomerRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Customer::class);
     }
+
+//    public function findByKeyword(string $q, int $offset = 0, int $limit = 20): Page
+//    {
+//        $query = $this->createQueryBuilder("p")
+//            ->andWhere("p.title like :q or p.content like :q")
+//            ->setParameter('q', "%" . $q . "%")
+//            ->orderBy('p.createdAt', 'DESC')
+//            ->setMaxResults($limit)
+//            ->setFirstResult($offset)
+//            ->getQuery();
+//
+//        $paginator = new Paginator($query, $fetchJoinCollection = false);
+//        $totalElements = count($paginator);
+//        $content = new ArrayCollection();
+//        foreach ($paginator as $post) {
+//            $content->add(PostSummaryDto::of($post->getId(), $post->getTitle()));
+//        }
+//        return Page::of ($content, $totalElements, $offset, $limit);
+//    }
+
 
     // /**
     //  * @return Customer[] Returns an array of Customer objects

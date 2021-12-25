@@ -13,7 +13,7 @@ class Phone
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
     #[Groups("phone:read")]
-    private int $id;
+    private int $id; /** @phpstan-ignore-line */
 
     #[ORM\Column(type: 'string', length: 255)]
     #[Groups("phone:read")]
@@ -62,12 +62,12 @@ class Phone
 
     public function getDisplay(): ?float
     {
-        return $this->display;
+        return $this->display; /** @phpstan-ignore-line */
     }
 
     public function setDisplay(float $display): self
     {
-        $this->display = $display;
+        $this->display = $display; /** @phpstan-ignore-line */
 
         return $this;
     }

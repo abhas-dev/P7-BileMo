@@ -14,8 +14,8 @@ class AppFixtures extends Fixture
     {
         // $product = new Product();
         // $manager->persist($product);
-        ClientFactory::createOne(['email' => 'client1@test.fr', 'password' => '12345678']);
-        CustomerFactory::createMany(100);
+        $client = ClientFactory::createOne(['email' => 'client1@test.fr', 'password' => '12345678']);
+        CustomerFactory::createMany(100, ['client' => $client]);
         PhoneFactory::createMany(100);
 
         $manager->flush();
