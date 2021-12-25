@@ -13,31 +13,31 @@ class Customer
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
-    #[Groups("customer_read", "customer_edit")]
-    private int $id;
+    #[Groups("customer_read")]
+    private int $id; /** @phpstan-ignore-line */
 
     #[ORM\Column(type: 'string', length: 255)]
-    #[Groups("customer_read", "customer_edit")]
+    #[Groups("customer_read")]
     #[Assert\NotBlank(message: 'Veuillez indiquer un prenom')]
     private string $firstname;
 
     #[ORM\Column(type: 'string', length: 255)]
-    #[Groups("customer_read", "customer_edit")]
+    #[Groups("customer_read")]
     #[Assert\NotBlank(message: 'Veuillez indiquer un nom')]
     private string $lastname;
 
     #[ORM\Column(type: 'string', length: 255)]
-    #[Groups("customer_read", "customer_edit")]
+    #[Groups("customer_read")]
     #[Assert\NotBlank(message: 'Veuillez indiquer une adresse')]
     private string $adress;
 
     #[ORM\Column(type: 'string', length: 255)]
-    #[Groups("customer_read", "customer_edit")]
+    #[Groups("customer_read")]
     #[Assert\NotBlank(message: 'Veuillez indiquer une adresse email')]
     private string $email;
 
     #[ORM\Column(type: 'string', length: 255)]
-    #[Groups("customer_read", "customer_edit")]
+    #[Groups("customer_read")]
     #[Assert\NotBlank(message: 'Veuillez indiquer un numero de telephone')]
     private string $phoneNumber;
 

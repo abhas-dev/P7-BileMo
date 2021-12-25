@@ -5,7 +5,9 @@ namespace App\Controller;
 use App\Entity\Customer;
 use App\Repository\ClientRepository;
 use App\Repository\CustomerRepository;
+use App\Request\ParamConverter\CustomerConverter;
 use Doctrine\ORM\EntityManagerInterface;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -39,6 +41,10 @@ class CustomerController extends AbstractController
         $this->validator = $validator;
     }
 
+    /**
+     * @param int $clientId
+     * @return JsonResponse
+     */
     #[Route('/client/{clientId<\d+>}/customers', name: 'index_customer', methods: 'GET')]
     public function index(int $clientId): JsonResponse
     {
@@ -48,25 +54,27 @@ class CustomerController extends AbstractController
 
     }
 
-    #[Route('/client/{clientId<\d+>}/customers/{customerId<\d+>}', name: 'get_one_customer', methods: 'GET')]
-    public function getOne(int $clientId, int $customerId): JsonResponse
+    #[Route('/customers/{id<\d+>}', name: 'get_one_customer', methods: 'GET')]
+    public function getOne(Customer $customer): JsonResponse
     {
-        $customer = $this->customerRepository->findOneBy(['client' => $clientId, 'id' => $customerId]);
-
         return
             $customer ?
                 $this->json($customer, 200, [],['groups' => 'customer_read']) :
                 $this->json(['status' => 400, 'message' => "Cet utilisateur n'existe pas"], 400);
     }
-
+    
+    /**
+     * @param Request $request
+     * @param Customer $customer
+     * @param ClientRepository $clientRepository
+     * @return JsonResponse
+     */
     #[Route('/customers', name: 'store_customer', methods: 'POST')]
-    public function store(Request $request, ClientRepository $clientRepository): JsonResponse
+    public function store(Request $request, Customer $customer, ClientRepository $clientRepository): JsonResponse
     {
-        $data = $request->getContent();
         try {
-            /** @var Customer $customer */
-            $customer = $this->serializer->deserialize($data, Customer::class, 'json');
 //            $customer->setClient($clientRepository->find($data['clientId']));
+            $customer = $this->serializer->deserialize($request->getContent(), Customer::class, 'json');
             $customer->setClient($clientRepository->find(1));
             $customer->setCreatedAt(new \DateTime());
 
@@ -82,7 +90,7 @@ class CustomerController extends AbstractController
             return $this->json(
                 $customer,
                 201,
-                ["Location" => $this->urlGenerator->generate("get_one_customer", ["customerId" => $customer->getId(), "clientId" => 1])],
+                ["Location" => $this->urlGenerator->generate("get_one_customer", ["id" => $customer->getId()])],
                 ['groups' => 'customer_read']);
         } catch (NotEncodableValueException $exception){
             return $this->json([
@@ -92,6 +100,11 @@ class CustomerController extends AbstractController
         }
     }
 
+    /**
+     * @param Customer $customer
+     * @param Request $request
+     * @return JsonResponse
+      */
     #[Route('/customers/{id<\d+>}', name: 'edit_customer', methods: 'PUT')]
     public function edit(Customer $customer, Request $request): JsonResponse
     {
@@ -114,6 +127,11 @@ class CustomerController extends AbstractController
         }
     }
 
+    /**
+     * @param Customer $customer
+     * @param Request $request
+     * @return JsonResponse
+     */
     #[Route('/customers/{id<\d+>}', name: 'remove_customer', methods: 'DELETE')]
     public function remove(Customer $customer, Request $request): JsonResponse
     {

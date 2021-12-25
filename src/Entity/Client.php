@@ -15,7 +15,7 @@ class Client
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
     #[Groups("client_read")]
-    private int $id;
+    private int $id; /** @phpstan-ignore-line */
 
     #[ORM\Column(type: 'string', length: 255)]
     #[Groups("client_read")]
