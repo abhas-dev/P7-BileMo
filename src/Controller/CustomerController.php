@@ -6,7 +6,9 @@ use App\Entity\Customer;
 use App\Exception\CustomerNotFoundException;
 use App\Repository\ClientRepository;
 use App\Repository\CustomerRepository;
+use App\Service\CustomerPaginator;
 use Doctrine\ORM\EntityManagerInterface;
+use http\Env\Response;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -25,15 +27,18 @@ class CustomerController extends AbstractController
     private EntityManagerInterface $manager;
     private UrlGeneratorInterface $urlGenerator;
     private ValidatorInterface $validator;
+    private CustomerPaginator $paginator;
 
     public function __construct(
+        CustomerPaginator $paginator,
         CustomerRepository $customerRepository,
         EntityManagerInterface $manager,
         SerializerInterface $serializer,
         UrlGeneratorInterface $urlGenerator,
-        ValidatorInterface $validator
+        ValidatorInterface $validator,
     )
     {
+        $this->paginator = $paginator;
         $this->customerRepository = $customerRepository;
         $this->manager = $manager;
         $this->serializer = $serializer;
@@ -48,24 +53,35 @@ class CustomerController extends AbstractController
     #[Route('/client/{clientId<\d+>}/customers', name: 'index_customer', methods: 'GET')]
     public function index(int $clientId, Request $request, PaginatorInterface $paginator): JsonResponse
     {
-        $query = $this->customerRepository->findBy(['client' => $clientId]);
-
         $limit = 10;
-        $page = $request->query->getInt('page', 1);
-        $pagination = $paginator->paginate($query, $page, $limit);
-        $totalCustomers = $pagination->getTotalItemCount();
+        $data = $this->paginator->paginate($clientId, $limit);
+        [
+            'nextPage' => $nextPage,
+            'page' => $page,
+            'pagination' => $pagination,
+            'totalCustomers' => $totalCustomers,
+            'totalPages' => $totalPages
+        ] = $data;
 
-        $data = [
-            'status' => 'success',
-            'total' => $totalCustomers,
-            'page_actuelle' =>  $page,
-            "nombre_d'utilisateur_par_page" => $limit,
-            "nombre_de_pages" => ceil($totalCustomers / $limit),
-            "données" => $pagination
-        ];
+        if($page <= $totalPages)
+        {
+            $nextPageUrl = $this->generateUrl('index_customer', ['clientId' => $clientId, 'page' => $nextPage], UrlGeneratorInterface::ABSOLUTE_URL);
+            $data = [
+                'status' => 'success',
+                'total' => $totalCustomers,
+                'page_actuelle' =>  $page,
+                "nombre_d'utilisateur_par_page" => $limit,
+                "nombre_de_pages" => $totalPages,
+                "page_suivante" => $nextPage ? $nextPageUrl : '',
+                "données" => $pagination
+            ];
 
-        return $this->json($data, 200, [],['groups' => 'customer_read']);
-
+            return $this->json($data, 200, [],['groups' => 'customer_read']);
+        }
+        return $this->json([
+            'status' => 'erreur',
+            'message' => "Cette page n'existe pas"
+        ], 404);
     }
 
     /**
