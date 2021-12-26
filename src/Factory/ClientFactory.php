@@ -4,6 +4,7 @@ namespace App\Factory;
 
 use App\Entity\Client;
 use App\Repository\ClientRepository;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Zenstruck\Foundry\RepositoryProxy;
 use Zenstruck\Foundry\ModelFactory;
 use Zenstruck\Foundry\Proxy;
@@ -28,9 +29,12 @@ use Zenstruck\Foundry\Proxy;
  */
 final class ClientFactory extends ModelFactory
 {
-    public function __construct()
+    private UserPasswordHasherInterface $hasher;
+
+    public function __construct(UserPasswordHasherInterface $hasher)
     {
         parent::__construct();
+        $this->hasher = $hasher;
 
         // TODO inject services if required (https://symfony.com/bundles/ZenstruckFoundryBundle/current/index.html#factories-as-services)
     }
@@ -43,6 +47,7 @@ final class ClientFactory extends ModelFactory
             'email' => self::faker()->email(),
             'password' => self::faker()->text(),
             'companyName' => self::faker()->words(2, true),
+            'roles' => ['ROLE_USER'],
             'createdAt' => self::faker()->dateTimeBetween('-3 month', 'now'),
         ];
     }
@@ -51,7 +56,9 @@ final class ClientFactory extends ModelFactory
     {
         // see https://symfony.com/bundles/ZenstruckFoundryBundle/current/index.html#initialization
         return $this
-            // ->afterInstantiate(function(Client $client): void {})
+             ->afterInstantiate(function(Client $client): void {
+                 $client->setPassword($this->hasher->hashPassword($client,$client->getPassword()));
+             })
         ;
     }
 
