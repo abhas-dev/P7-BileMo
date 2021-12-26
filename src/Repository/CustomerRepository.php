@@ -21,6 +21,15 @@ class CustomerRepository extends ServiceEntityRepository
         parent::__construct($registry, Customer::class);
     }
 
+    public function getCount()
+    {
+        $queryBuilder = $this->createQueryBuilder('customer');
+        $queryBuilder
+            ->select($queryBuilder->expr()->count('customer.id'));
+
+        return $queryBuilder->getQuery()->getSingleScalarResult();
+    }
+
 //    public function findByKeyword(string $q, int $offset = 0, int $limit = 20): Page
 //    {
 //        $query = $this->createQueryBuilder("p")
