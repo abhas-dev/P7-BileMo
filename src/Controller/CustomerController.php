@@ -7,6 +7,7 @@ use App\Exception\CustomerNotFoundException;
 use App\Repository\ClientRepository;
 use App\Repository\CustomerRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -45,9 +46,11 @@ class CustomerController extends AbstractController
      * @return JsonResponse
      */
     #[Route('/client/{clientId<\d+>}/customers', name: 'index_customer', methods: 'GET')]
-    public function index(int $clientId): JsonResponse
+    public function index(int $clientId, Request $request, PaginatorInterface $paginator): JsonResponse
     {
-        $customers = $this->customerRepository->findBy(['client' => $clientId]);
+        $data = $this->customerRepository->findBy(['client' => $clientId]);
+
+        $customers = $paginator->paginate($data, $request->query->getInt('page', 1), 10);
 
         return $this->json($customers, 200, [],['groups' => 'customer_read']);
 
