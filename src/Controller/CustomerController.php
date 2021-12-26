@@ -48,11 +48,23 @@ class CustomerController extends AbstractController
     #[Route('/client/{clientId<\d+>}/customers', name: 'index_customer', methods: 'GET')]
     public function index(int $clientId, Request $request, PaginatorInterface $paginator): JsonResponse
     {
-        $data = $this->customerRepository->findBy(['client' => $clientId]);
+        $query = $this->customerRepository->findBy(['client' => $clientId]);
 
-        $customers = $paginator->paginate($data, $request->query->getInt('page', 1), 10);
+        $limit = 10;
+        $page = $request->query->getInt('page', 1);
+        $pagination = $paginator->paginate($query, $page, $limit);
+        $totalCustomers = $pagination->getTotalItemCount();
 
-        return $this->json($customers, 200, [],['groups' => 'customer_read']);
+        $data = [
+            'status' => 'success',
+            'total' => $totalCustomers,
+            'page_actuelle' =>  $page,
+            "nombre_d'utilisateur_par_page" => $limit,
+            "nombre_de_pages" => ceil($totalCustomers / $limit),
+            "données" => $pagination
+        ];
+
+        return $this->json($data, 200, [],['groups' => 'customer_read']);
 
     }
 
