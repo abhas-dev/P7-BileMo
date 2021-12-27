@@ -43,11 +43,11 @@ final class ClientFactory extends ModelFactory
     {
         return [
             // TODO add your default values here (https://symfony.com/bundles/ZenstruckFoundryBundle/current/index.html#model-factories)
-            'username' => self::faker()->userName(),
+//            'username' => self::faker()->userName(),
             'email' => self::faker()->email(),
             'password' => self::faker()->text(),
             'companyName' => self::faker()->words(2, true),
-            'roles' => ['ROLE_USER'],
+            'roles' => [],
             'createdAt' => self::faker()->dateTimeBetween('-3 month', 'now'),
         ];
     }

@@ -21,10 +21,6 @@ class Client implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(type: 'string', length: 255)]
     #[Groups("client_read")]
-    private string $username;
-
-    #[ORM\Column(type: 'string', length: 255)]
-    #[Groups("client_read")]
     private string $email;
 
     #[ORM\Column(type: 'string', length: 255)]
@@ -58,14 +54,7 @@ class Client implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function getUsername(): ?string
     {
-        return $this->username;
-    }
-
-    public function setUsername(string $username): self
-    {
-        $this->username = $username;
-
-        return $this;
+        return $this->email;
     }
 
     public function getEmail(): ?string
@@ -153,7 +142,7 @@ class Client implements UserInterface, PasswordAuthenticatedUserInterface
      */
     public function getUserIdentifier(): string
     {
-        return (string) $this->email;
+        return $this->email;
     }
 
     /**

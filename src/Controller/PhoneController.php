@@ -9,6 +9,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class PhoneController extends AbstractController
 {
@@ -36,7 +37,14 @@ class PhoneController extends AbstractController
     public function getOne(int $id, Phone $phone = null): JsonResponse
     {
         if ($phone) {
-            return $this->json($phone);
+            $data = [
+                'Produit' => $phone,
+                'Lister' => [
+                    'Method:' => 'GET',
+                    'Link' => $this->generateUrl('index_phone', [], UrlGeneratorInterface::ABSOLUTE_URL)
+                ]
+            ];
+            return $this->json($data, 200, [], ['groups' => 'phone:read']);
         } else {
             throw new PhoneNotFoundException($id);
         }
