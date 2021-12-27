@@ -19,6 +19,15 @@ class PhoneRepository extends ServiceEntityRepository
         parent::__construct($registry, Phone::class);
     }
 
+    public function getCount()
+    {
+        $queryBuilder = $this->createQueryBuilder('customer');
+        $queryBuilder
+            ->select($queryBuilder->expr()->count('customer.id'));
+
+        return $queryBuilder->getQuery()->getSingleScalarResult();
+    }
+
     // /**
     //  * @return Phone[] Returns an array of Phone objects
     //  */

@@ -51,7 +51,7 @@ class CustomerController extends AbstractController
      * @return JsonResponse
      */
     #[Route('/client/{clientId<\d+>}/customers', name: 'index_customer', methods: 'GET')]
-    public function index(int $clientId, Request $request, PaginatorInterface $paginator): JsonResponse
+    public function index(int $clientId): JsonResponse
     {
         $limit = 10;
         $data = $this->paginator->paginate($clientId, $limit);
@@ -93,7 +93,22 @@ class CustomerController extends AbstractController
     public function getOne(int $id, Customer $customer = null): JsonResponse
     {
         if ($customer) {
-            return $this->json($customer, 200, [], ['groups' => 'customer_read']);
+            $data = [
+                'Utilisateur' => $customer,
+                'Modifier' => [
+                    'Method:' => 'PUT',
+                    'Link:' => $this->generateUrl('edit_customer', ['id' => $id], UrlGeneratorInterface::ABSOLUTE_URL)
+                ],
+                'Supprimer' => [
+                    'Method' => 'DELETE',
+                    'Link' => $this->generateUrl('remove_customer', ['id' => $id], UrlGeneratorInterface::ABSOLUTE_URL)
+                ],
+                'Lister' => [
+                    'Method:' => 'GET',
+                    'Link' => $this->generateUrl('index_customer', ['clientId' => $this->getUser()->getId()], UrlGeneratorInterface::ABSOLUTE_URL)
+                ]
+            ];
+            return $this->json($data, 200, [], ['groups' => 'customer_read']);
         }
         throw new CustomerNotFoundException($id);
     }
@@ -107,9 +122,8 @@ class CustomerController extends AbstractController
     public function store(Request $request, ClientRepository $clientRepository): JsonResponse
     {
         try {
-//            $customer->setClient($clientRepository->find($data['clientId']));
             $customer = $this->serializer->deserialize($request->getContent(), Customer::class, 'json');
-            $customer->setClient($clientRepository->find(1));
+            $customer->setClient($this->getUser());
             $customer->setCreatedAt(new \DateTime());
 
             $errors = $this->validator->validate($customer);
