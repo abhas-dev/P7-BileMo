@@ -8,8 +8,7 @@ use App\Repository\ClientRepository;
 use App\Repository\CustomerRepository;
 use App\Service\CustomerPaginator;
 use Doctrine\ORM\EntityManagerInterface;
-use http\Env\Response;
-use Knp\Component\Pager\PaginatorInterface;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -20,6 +19,7 @@ use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
+#[IsGranted('ROLE_CLIENT', statusCode: 403, message: "Vous n'avez pas acces à cette ressource")]
 class CustomerController extends AbstractController
 {
     private CustomerRepository $customerRepository;

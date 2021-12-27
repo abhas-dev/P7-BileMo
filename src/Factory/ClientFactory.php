@@ -47,7 +47,7 @@ final class ClientFactory extends ModelFactory
             'email' => self::faker()->email(),
             'password' => self::faker()->text(),
             'companyName' => self::faker()->words(2, true),
-            'roles' => [],
+            'roles' => ['ROLE_CLIENT'],
             'createdAt' => self::faker()->dateTimeBetween('-3 month', 'now'),
         ];
     }
